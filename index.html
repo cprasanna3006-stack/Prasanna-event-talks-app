@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks 2026</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            background-color: #f4f7f9;
+            color: #333;
+        }
+        header {
+            background-color: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        header p {
+            margin: 0.5rem 0 0;
+            font-size: 1.1rem;
+            color: #bdc3c7;
+        }
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .search-container {
+            margin-bottom: 2rem;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 1px solid #dcdcdc;
+            box-sizing: border-box;
+        }
+        .schedule-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .schedule-item {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+        .schedule-item:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        .time-slot {
+            background-color: #3498db;
+            color: #fff;
+            padding: 1.5rem;
+            text-align: center;
+            flex-shrink: 0;
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .time-slot span {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .talk-details {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+        .talk-details h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        .talk-details .speakers {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        .talk-details .description {
+            margin-bottom: 1rem;
+        }
+        .talk-details .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .category-tag {
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+        .break-item .time-slot {
+            background-color: #27ae60;
+        }
+        .break-item .talk-details h2 {
+            color: #27ae60;
+        }
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Tech Talks 2026</h1>
+        <p>A one-day event filled with insightful technical talks.</p>
+    </header>
+
+    <main>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by category (e.g., AI, Cloud)...">
+        </div>
+        <div id="schedule" class="schedule-container"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Tech Talks. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const talks = [
+                {
+                    title: "The Future of Artificial Intelligence",
+                    speakers: ["Dr. Evelyn Reed"],
+                    categories: ["AI", "Future Tech", "Machine Learning"],
+                    description: "A deep dive into the next decade of AI development, exploring trends in neural networks, and the potential impact on society."
+                },
+                {
+                    title: "Building Scalable Cloud-Native Applications",
+                    speakers: ["Johnathan Chen", "Maria Garcia"],
+                    categories: ["Cloud", "DevOps", "Microservices"],
+                    description: "Learn the best practices for designing and deploying applications that are born in the cloud, focusing on scalability, resilience, and cost-effectiveness."
+                },
+                {
+                    title: "Cybersecurity in a Post-Quantum World",
+                    speakers: ["Alexei Petrov"],
+                    categories: ["Security", "Cryptography", "Future Tech"],
+                    description: "An exploration of the threats quantum computing poses to current cryptographic standards and the race to develop quantum-resistant algorithms."
+                },
+                {
+                    title: "The Power of Declarative UIs with Modern Web Frameworks",
+                    speakers: ["Samantha Bee"],
+                    categories: ["Web Dev", "JavaScript", "UI/UX"],
+                    description: "A comprehensive look at how modern frameworks like React, Vue, and Svelte are changing the way we build user interfaces."
+                },
+                {
+                    title: "Ethical AI: Navigating the Moral Landscape",
+                    speakers: ["Dr. Kenji Tanaka", "Priya Singh"],
+                    categories: ["AI", "Ethics", "Society"],
+                    description: "This talk discusses the ethical dilemmas presented by AI, from algorithmic bias to autonomous decision-making, and proposes frameworks for responsible innovation."
+                },
+                {
+                    title: "Mastering Containerization with Docker and Kubernetes",
+                    speakers: ["David Lee"],
+                    categories: ["DevOps", "Cloud", "Containers"],
+                    description: "A practical guide to using Docker for application packaging and Kubernetes for orchestration, with live demos and real-world examples."
+                }
+            ];
+
+            const scheduleContainer = document.getElementById('schedule');
+            const searchInput = document.getElementById('searchInput');
+
+            const renderSchedule = (filteredTalks) => {
+                scheduleContainer.innerHTML = '';
+                
+                const eventStartTime = new Date();
+                eventStartTime.setHours(10, 0, 0, 0); // Event starts at 10:00 AM
+
+                let currentTime = new Date(eventStartTime);
+                let talkIndex = 0;
+                let lunchInserted = false;
+
+                const formatTime = (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const allScheduleItems = [];
+                
+                // Prepare talk items
+                talks.forEach(talk => {
+                    const isVisible = filteredTalks.some(ft => ft.title === talk.title);
+                    if (isVisible) {
+                        allScheduleItems.push({ type: 'talk', data: talk });
+                    }
+                });
+
+                // Insert lunch break
+                if (allScheduleItems.length > 3) {
+                     allScheduleItems.splice(3, 0, { type: 'break', data: { title: 'Lunch Break', duration: 60 } });
+                } else {
+                     allScheduleItems.push({ type: 'break', data: { title: 'Lunch Break', duration: 60 } });
+                }
+
+
+                if (allScheduleItems.filter(item => item.type === 'talk').length === 0 && searchInput.value.length > 0) {
+                    scheduleContainer.innerHTML = `<div class="no-results"><h3>No talks found</h3><p>No talks match the category "${searchInput.value}". Try a different search.</p></div>`;
+                    return;
+                }
+                
+                allScheduleItems.forEach((item, index) => {
+                    const startTime = new Date(currentTime);
+                    let duration = 0;
+                    let scheduleItemHTML = '';
+
+                    if (item.type === 'talk') {
+                        duration = 60; // Talk duration
+                        const talk = item.data;
+                        scheduleItemHTML = `
+                            <div class="schedule-item">
+                                <div class="time-slot">
+                                    <span>${formatTime(startTime)}</span>
+                                </div>
+                                <div class="talk-details">
+                                    <h2>${talk.title}</h2>
+                                    <p class="speakers">by ${talk.speakers.join(', ')}</p>
+                                    <p class="description">${talk.description}</p>
+                                    <div class="categories">
+                                        ${talk.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (item.type === 'break') {
+                        duration = item.data.duration; // Break duration
+                        scheduleItemHTML = `
+                             <div class="schedule-item break-item">
+                                <div class="time-slot">
+                                    <span>${formatTime(startTime)}</span>
+                                </div>
+                                <div class="talk-details">
+                                    <h2>${item.data.title}</h2>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    scheduleContainer.innerHTML += scheduleItemHTML;
+                    
+                    // Add duration and transition time for the next item
+                    currentTime.setMinutes(currentTime.getMinutes() + duration);
+                    if (index < allScheduleItems.length - 1 && item.type === 'talk' && allScheduleItems[index+1].type === 'talk') {
+                         currentTime.setMinutes(currentTime.getMinutes() + 10); // 10 min transition
+                    }
+                });
+            };
+            
+            const handleSearch = () => {
+                const query = searchInput.value.toLowerCase().trim();
+                if (query === '') {
+                    renderSchedule(talks);
+                    return;
+                }
+                const filteredTalks = talks.filter(talk => 
+                    talk.categories.some(cat => cat.toLowerCase().includes(query))
+                );
+                renderSchedule(filteredTalks);
+            };
+
+            searchInput.addEventListener('input', handleSearch);
+
+            // Initial render
+            renderSchedule(talks);
+        });
+    </script>
+
+</body>
+</html>
